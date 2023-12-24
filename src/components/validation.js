@@ -1,21 +1,20 @@
 
-//import {validationConfig} from './index.js';
-
-
 function showInputError (formElement, inputElement, errorMessage, validationConfig) {
     const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
     inputElement.classList.add(validationConfig.inputErrorClass);
     errorElement.textContent = errorMessage;
     errorElement.classList.add(validationConfig.errorClass);
-    inputElement.style.borderBottom = "1px solid #f00";  
-  };
+    inputElement.classList.add('input-error');
+    inputElement.classList.remove('input-not-error');
+  };  
   
   function hideInputError (formElement, inputElement, validationConfig) {
     const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
     inputElement.classList.remove(validationConfig.inputErrorClass);
     errorElement.classList.remove(validationConfig.errorClass);
     errorElement.textContent = '';
-    inputElement.style.borderBottom = "1px solid rgba(0, 0, 0, .2)";
+    inputElement.classList.remove('input-error');  
+    inputElement.classList.add('input-not-error');  
   };
   
   function isValid (formElement, inputElement, validationConfig) {
@@ -30,8 +29,7 @@ function showInputError (formElement, inputElement, errorMessage, validationConf
       hideInputError(formElement, inputElement, validationConfig);
     }
     disabledButton(formElement, validationConfig);
-  }
-  
+  }  
   
   function disabledButton (formElement, validationConfig) {
     const inputArray = formElement.querySelectorAll(validationConfig.inputSelector);
@@ -43,9 +41,7 @@ function showInputError (formElement, inputElement, errorMessage, validationConf
         break;
       }
     } 
-  };
-  
-  
+  };  
   
   function setEventListeners (formElement, validationConfig) {
     const inputList = Array.from(formElement.querySelectorAll(validationConfig.inputSelector));

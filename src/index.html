@@ -60,11 +60,10 @@
         data-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы" placeholder="Название" required>
         <span class="card-input-error form__input-error"></span>
 
-        <input type="url" name="link" id="link-input" class="popup__input popup__input_type_url" placeholder="Ссылка на картинку" pattern="^https?://[a-zA-Z0-9\.\,\!\&\*\/\-]{1,}\.[a-zA-Z]{1,}\/?[a-zA-Z0-9\.\,\!\&\*\/\-]{1,}"
-        data-message="Введите адрес в формате URL" required>
+        <input type="url" name="link" id="link-input" class="popup__input popup__input_type_url" placeholder="Ссылка на картинку" data-message="Введите адрес в формате URL" required>
         <span class="link-input-error form__input-error"></span>
 
-        <button type="submit" class="button popup__button">Сохранить</button>
+        <button type="submit" class="button popup__button">Создать</button>
       </form>
     </div>
   </div>
@@ -89,8 +88,7 @@
       <button type="button" class="popup__close"></button>
       <h3 class="popup__title">Обновить аватар</h3>
       <form class="popup__form" name="form-avatar" novalidate>
-        <input type="url" name="place-avatar" id="avatar-input" class="popup__input popup__input_type_url" placeholder="Ссылка на аватар" pattern="^https?://[a-zA-Z0-9\.\,\!\&\*\/\-]{1,}\.[a-zA-Z]{1,}\/?[a-zA-Z0-9\.\,\!\&\*\/\-]{1,}"
-        data-message="Введите адрес в формате URL" required>
+        <input type="url" name="place-avatar" id="avatar-input" class="popup__input popup__input_type_url" placeholder="Ссылка на аватар" data-message="Введите адрес в формате URL" required>
         <span class="avatar-input-error form__input-error"></span>
         <button type="submit" class="button popup__button">Сохранить</button>
     </form>

@@ -7,21 +7,12 @@ document.removeEventListener('click', closeToOverlay);
 }
 
 function openModal (popup) {
- // if (popup !== document.querySelector('.popup_type_edit') && popup !== document.querySelector('.popup__button-delete')) {
-  //  popup.querySelector('.popup__button').setAttribute('disabled', 'true');
-  //}
 popup.classList.add('popup_is-opened');
 document.addEventListener('keydown', closeEscModal);
 document.addEventListener('click', closeToOverlay);
-
-const errorHide = document.querySelectorAll('.form__input-error_active');
-errorHide.forEach((data) => {
-  data.textContent='';
-})
-
 const inputForm = document.querySelectorAll('.popup__input');
 inputForm.forEach((input) => {
-  input.style.borderBottom = "1px solid rgba(0, 0, 0, .2)" ;
+  input.classList.add('input-not-error');
 })
 }
 

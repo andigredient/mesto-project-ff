@@ -1,12 +1,11 @@
-import {closeModal, openModal} from './modal.js';
-import {enableValidation} from './validation.js';
-import { deleteCards, createCards, likeToCard } from './card.js';
-import { getUsers, getCards, apiHandleFormSubmitAdd, apiHandleFormSubmitEdit, apiHandleFormSubmitAvatar } from './api.js';
+import {closeModal, openModal} from './components/modal.js';
+import {enableValidation} from './components/validation.js';
+import { createCards, removeCard } from './components/card.js';
+import { getUsers, getCards, apiHandleFormSubmitAdd, apiHandleFormSubmitEdit, apiHandleFormSubmitAvatar, toLike, toDislike, apiDeleteCard } from './components/api.js';
 import './pages/index.css';
 
-const popup = document.querySelector('.popup');
+//const popup = document.querySelector('.popup');
 const placesList = document.querySelector('.places__list');
-const cardTemplate = document.querySelector('#card-template').content;
 const buttonEdit = document.querySelector('.profile__edit-button');
 const popupEdit = document.querySelector('.popup_type_edit');
 const buttonAdd = document.querySelector('.profile__add-button');
@@ -21,6 +20,7 @@ const profileDescription = document.querySelector('.profile__description');
 const popupButton = document.querySelectorAll('.popup__button');
 const formEditProfile = document.forms['edit-profile'];
 const nameInput = formEditProfile.name;
+const popupConfidence = document.querySelector('.popup_confidence');
 const jobInput = formEditProfile.description;
 const formAddCard = document.forms['new-place'];
 const formAvatar = document.forms['form-avatar'];
@@ -32,6 +32,7 @@ const popupAvatar = document.querySelector('.popup_avatar');
 const titleInput = formAddCard['place-name'];
 const linkInput = formAddCard.link;
 const avatarInput = formAvatar['place-avatar'];
+const imagePopup = document.querySelector('.popup_type_image');
 const validationConfig = {
   formSelector: '.popup__form',
   inputSelector: '.popup__input',
@@ -49,11 +50,16 @@ function handleFormSubmitEdit(evt) {
   evt.preventDefault();
   const buttonLoading = evt.target.querySelector('.popup__button');
   renderLoading(true, buttonLoading);  
-  profileTitle.textContent = nameInput.value;
-  profileDescription.textContent = jobInput.value;
+  //profileTitle.textContent = nameInput.value;//---
+  //profileDescription.textContent = jobInput.value;//---
   apiHandleFormSubmitEdit()
-  .finally (() => renderLoading(false, buttonLoading));
-  closeModal(popupEdit);
+  .catch((err) => {
+    console.log(err); 
+  })
+  .finally (() => renderLoading(false, buttonLoading))
+  .then (() => {
+    closeModal(popupEdit);
+  })
 }
 
 function handleFormSubmitAdd(evt) {
@@ -61,8 +67,13 @@ function handleFormSubmitAdd(evt) {
   const buttonLoading = evt.target.querySelector('.popup__button');
   renderLoading(true, buttonLoading);
   apiHandleFormSubmitAdd()
-  .finally (() => renderLoading(false, buttonLoading));
-  closeModal(popupAdd);
+  .catch((err) => {
+    console.log(err); 
+  })
+  .finally (() => renderLoading(false, buttonLoading))
+  .then (() => {
+    closeModal(popupAdd);
+  })
 }
 
 function handleFormSubmitAvatar(evt) {
@@ -70,8 +81,13 @@ function handleFormSubmitAvatar(evt) {
   const buttonLoading = evt.target.querySelector('.popup__button');
   renderLoading(true, buttonLoading)
   apiHandleFormSubmitAvatar()
-  .finally (() => renderLoading(false, buttonLoading));  
-  closeModal(popupAvatar);
+  .catch((err) => {
+    console.log(err);
+  })
+  .finally (() => renderLoading(false, buttonLoading))
+  .then (() => {
+    closeModal(popupAvatar);
+  })
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -80,7 +96,13 @@ function handleFormSubmitAvatar(evt) {
 profileImg.addEventListener('click', function() {
   formAvatar.querySelector('.popup__button').setAttribute('disabled', 'true');
   formAvatar.reset();
-  inputCardLink.style.borderBottom = "1px solid rgba(0, 0, 0, .2)";  
+  inputCardLink.classList.remove('input-error');  
+  inputCardLink.classList.add('input-not-error'); 
+
+  const errorHide = document.querySelectorAll('.form__input-error_active');
+  errorHide.forEach((data) => {
+    data.textContent='';
+  })   
   openModal(popupAvatar);
 })
 
@@ -88,6 +110,10 @@ profileImg.addEventListener('click', function() {
 buttonEdit.addEventListener('click', function() {
     inputPopupName.value = profileTitle.textContent;
     inputPopupDescription.value = profileDescription.textContent;
+    const errorHide = document.querySelectorAll('.form__input-error_active');
+    errorHide.forEach((data) => {
+      data.textContent='';
+    })
     openModal(popupEdit);
   })
   
@@ -95,16 +121,20 @@ buttonEdit.addEventListener('click', function() {
   buttonAdd.addEventListener('click', function() {
   formAddCard.querySelector('.popup__button').setAttribute('disabled', 'true');
   formAddCard.reset();
-    inputCardName.value="";
-    inputCardLink.value="";
-    inputCardName.style.borderBottom = "1px solid rgba(0, 0, 0, .2)";
-    inputCardLink.style.borderBottom = "1px solid rgba(0, 0, 0, .2)";
+  inputCardName.classList.remove('input-error');  
+  inputCardName.classList.add('input-not-error');  
+  inputCardLink.classList.remove('input-error');  
+  inputCardLink.classList.add('input-not-error');  
+
+  const errorHide = document.querySelectorAll('.form__input-error_active');
+  errorHide.forEach((data) => {
+    data.textContent='';
+  })
     openModal(popupAdd);
 })
 
 //попап с картинками
 function openImagePopup (evt) {
-  const imagePopup = document.querySelector('.popup_type_image');
   popupImage.setAttribute('src',evt.link);
   popupImage.setAttribute('alt',evt.name);
   popupTitle.textContent = evt.name;
@@ -130,7 +160,7 @@ Promise.all([getCards(), getUsers()])
   cards.forEach ((item) =>  {    
     const userId = item.owner._id;
     const imgId = item._id;
-    placesList.append(createCards(item, deleteCards, likeToCard, openImagePopup, myId, userId, imgId))
+    placesList.append(createCards(item, likeToCard, openImagePopup, myId, userId, imgId))
   });
 }
 )
@@ -139,9 +169,37 @@ function renderLoading (isLoading, button) {
   if (isLoading) {
     button.textContent = 'Сохранение...'
   } else {
-    button.textContent = 'Сохранить'
+    if (button.closest('.popup_type_new-card')) {
+          button.textContent = 'Создать';    
+        } else {
+          button.textContent = 'Сохранить';
+        }
   }
 }
 
+function likeToCard (evt, item, likeCount) {
+  if (!evt.target.classList.contains('card__like-button_is-active')) {
+    toLike(item._id)    
+    .then((res) => {
+      likeCount.textContent = res.likes.length;
+      evt.target.classList.toggle('card__like-button_is-active');     
+    }) 
+  }
+  if (evt.target.classList.contains('card__like-button_is-active')) {
+    toDislike(item._id)       
+    .then((res) => {
+      likeCount.textContent = res.likes.length;
+      evt.target.classList.toggle('card__like-button_is-active');     
+    }) 
+  }
+}
 
-export { cardTemplate, titleInput, linkInput, nameInput, jobInput, avatarInput}
+function deleteCards (id, card) {
+  apiDeleteCard(id)
+  .then(() => {
+    card.remove();
+    closeModal(popupConfidence);
+  })
+}
+
+export { titleInput, linkInput, nameInput, jobInput, avatarInput, deleteCards}

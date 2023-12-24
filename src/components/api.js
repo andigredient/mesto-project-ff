@@ -1,4 +1,4 @@
-import {titleInput, linkInput, nameInput, jobInput, avatarInput} from './index.js';
+import {titleInput, linkInput, nameInput, jobInput, avatarInput} from '../index';
 
 
 const config = {
@@ -15,25 +15,21 @@ function getUsers () {
       authorization: config.headers.authorization
     }
   })
-  .then((res) => {
-    if (res.ok) {
-      return res.json(); 
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
+  .then(res => {
+    return getResponseData(res);
   });
 }
-config.headers
+
+//config.headers
+
 function getCards () { 
   return fetch(`${config.baseUrl}/cards`, {
     headers: {
       authorization: config.headers.authorization
     }
   })
-  .then((res) => {
-    if (res.ok) {
-      return res.json(); 
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
+  .then(res => {
+    return getResponseData(res);
   });
 }
 
@@ -48,6 +44,9 @@ function apiHandleFormSubmitAdd() {
         name: titleInput.value,
         link: linkInput.value        
       })
+    })
+    .then((res) => {
+      return getResponseData(res);
     }) 
 }
 function apiHandleFormSubmitEdit() {
@@ -62,7 +61,17 @@ return fetch(`${config.baseUrl}/users/me`, {
       about: jobInput.value
     })
   })  
+  .then((res) => {
+    return getResponseData(res);
+  }) 
+  .then(() => {
+    const profileTitle = document.querySelector('.profile__title');
+    const profileDescription = document.querySelector('.profile__description');
+    profileTitle.textContent = nameInput.value;
+    profileDescription.textContent = jobInput.value;
+  })
 }
+
 function apiHandleFormSubmitAvatar() {
 return fetch(`${config.baseUrl}/users/me/avatar`, {
     method: 'PATCH',
@@ -74,20 +83,19 @@ return fetch(`${config.baseUrl}/users/me/avatar`, {
       avatar: avatarInput.value,
     })
   })
+  .then((res) => {
+    return getResponseData(res);
+  }) 
 }
 
 function toLike(id) {
   return fetch(`${config.baseUrl}/cards/likes/${id}`, {
     method: 'PUT',
-    headers: {
-      authorization: config.headers.authorization
-    }
+    headers: config.headers
+    
   })
   .then((res) => {
-    if (res.ok) {
-      return res.json();
-    } 
-    return Promise.reject(`Ошибка: ${res.status}`);
+    return getResponseData(res);
   })  
 }
 
@@ -99,10 +107,7 @@ function toDislike(id) {
     }
   })
   .then((res) => {
-  if (res.ok) {
-    return res.json(); 
-  }
-  return Promise.reject(`Ошибка: ${res.status}`);
+    return getResponseData(res);
   })
 }
 
@@ -114,11 +119,18 @@ function apiDeleteCard (id) {
     }
   })
   .then((res) => {
-    if (res.ok) {
-    return res.json(); 
-    }
+    return getResponseData(res);
   })
 }
 
-export {getUsers, getCards, apiHandleFormSubmitAdd, apiHandleFormSubmitEdit, apiHandleFormSubmitAvatar, toLike, toDislike, apiDeleteCard}
+
+function getResponseData(res) {
+  if (!res.ok) {
+      return Promise.reject(`Ошибка: ${res.status}`); 
+  }
+  return res.json();
+  
+}
+
+export {getUsers, getCards, apiHandleFormSubmitAdd, apiHandleFormSubmitEdit, apiHandleFormSubmitAvatar, toLike, toDislike, apiDeleteCard, getResponseData}
   
