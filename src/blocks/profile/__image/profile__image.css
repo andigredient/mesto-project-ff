@@ -9,6 +9,19 @@
   margin: 0 29px 0 0;
 }
 
+.profile__image:hover:after {
+  background-color: rgba(0,0,0,.8);
+  background-image: url('../../../images/avatar-hover.svg');
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-size: 22%;
+  block-size: 100%;
+  content: '';
+  cursor: pointer;
+  display: block;
+  inline-size: 100%
+}
+  
 @media screen and (max-width: 740px) {
   .profile__image {
     margin: 0 10px 0 0;
