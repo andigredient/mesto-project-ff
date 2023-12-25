@@ -1,6 +1,6 @@
 import {closeModal, openModal} from './components/modal.js';
 import {enableValidation} from './components/validation.js';
-import { createCards, removeCard } from './components/card.js';
+import { createCards, removeCard, deleteCards, likeToCard } from './components/card.js';
 import { getUsers, getCards, apiHandleFormSubmitAdd, apiHandleFormSubmitEdit, apiHandleFormSubmitAvatar, toLike, toDislike, apiDeleteCard } from './components/api.js';
 import './pages/index.css';
 
@@ -16,11 +16,11 @@ const buttonsClosePopup = document.querySelectorAll('.popup__close');
 const inputPopupName = document.querySelector('.popup__input_type_name');
 const inputPopupDescription = document.querySelector('.popup__input_type_description');
 const profileTitle = document.querySelector('.profile__title');
+const popupConfidence = document.querySelector('.popup_confidence');
 const profileDescription = document.querySelector('.profile__description');
 const popupButton = document.querySelectorAll('.popup__button');
 const formEditProfile = document.forms['edit-profile'];
 const nameInput = formEditProfile.name;
-const popupConfidence = document.querySelector('.popup_confidence');
 const jobInput = formEditProfile.description;
 const formAddCard = document.forms['new-place'];
 const formAvatar = document.forms['form-avatar'];
@@ -52,42 +52,44 @@ function handleFormSubmitEdit(evt) {
   renderLoading(true, buttonLoading);  
   //profileTitle.textContent = nameInput.value;//---
   //profileDescription.textContent = jobInput.value;//---
-  apiHandleFormSubmitEdit()
+  apiHandleFormSubmitEdit(nameInput, jobInput)
+  .then (() => {
+    closeModal(popupEdit);
+  })
   .catch((err) => {
     console.log(err); 
   })
   .finally (() => renderLoading(false, buttonLoading))
-  .then (() => {
-    closeModal(popupEdit);
-  })
 }
 
 function handleFormSubmitAdd(evt) {
   evt.preventDefault();
   const buttonLoading = evt.target.querySelector('.popup__button');
   renderLoading(true, buttonLoading);
-  apiHandleFormSubmitAdd()
+  apiHandleFormSubmitAdd(titleInput, linkInput)
+  .then ((res) => {
+    placesList.prepend(createCards(res, likeHandler, openImagePopup, deleteHandler, res.owner._id, popupConfidence))
+    closeModal(popupAdd);
+  })
   .catch((err) => {
     console.log(err); 
   })
   .finally (() => renderLoading(false, buttonLoading))
-  .then (() => {
-    closeModal(popupAdd);
-  })
 }
 
 function handleFormSubmitAvatar(evt) {
   evt.preventDefault();
   const buttonLoading = evt.target.querySelector('.popup__button');
   renderLoading(true, buttonLoading)
-  apiHandleFormSubmitAvatar()
+  apiHandleFormSubmitAvatar(avatarInput)
+  .then (() => {
+    profileImg.style.backgroundImage = `url("${avatarInput.value}"`;
+    closeModal(popupAvatar);
+  })
   .catch((err) => {
     console.log(err);
   })
   .finally (() => renderLoading(false, buttonLoading))
-  .then (() => {
-    closeModal(popupAvatar);
-  })
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -160,7 +162,7 @@ Promise.all([getCards(), getUsers()])
   cards.forEach ((item) =>  {    
     const userId = item.owner._id;
     const imgId = item._id;
-    placesList.append(createCards(item, likeToCard, openImagePopup, myId, userId, imgId))
+    placesList.append(createCards(item, likeHandler, openImagePopup, deleteHandler, myId, popupConfidence))
   });
 }
 )
@@ -177,29 +179,27 @@ function renderLoading (isLoading, button) {
   }
 }
 
-function likeToCard (evt, item, likeCount) {
+function likeHandler (evt, item, likeCount) {
   if (!evt.target.classList.contains('card__like-button_is-active')) {
     toLike(item._id)    
     .then((res) => {
-      likeCount.textContent = res.likes.length;
-      evt.target.classList.toggle('card__like-button_is-active');     
+      likeToCard(evt, likeCount, res);     
     }) 
   }
   if (evt.target.classList.contains('card__like-button_is-active')) {
     toDislike(item._id)       
     .then((res) => {
-      likeCount.textContent = res.likes.length;
-      evt.target.classList.toggle('card__like-button_is-active');     
+      likeToCard(evt, likeCount, res);
+           
     }) 
-  }
+  }  
 }
 
-function deleteCards (id, card) {
+function deleteHandler (id, card, popupConfidence) {
   apiDeleteCard(id)
   .then(() => {
-    card.remove();
-    closeModal(popupConfidence);
+    deleteCards(card, popupConfidence);
   })
 }
 
-export { titleInput, linkInput, nameInput, jobInput, avatarInput, deleteCards}
+export { titleInput, linkInput, nameInput, jobInput, avatarInput, deleteHandler}

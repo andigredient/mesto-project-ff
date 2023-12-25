@@ -1,4 +1,3 @@
-import {titleInput, linkInput, nameInput, jobInput, avatarInput} from '../index';
 
 
 const config = {
@@ -17,7 +16,10 @@ function getUsers () {
   })
   .then(res => {
     return getResponseData(res);
-  });
+  })
+  .catch((err) => {
+    console.log(err); 
+  })
 }
 
 //config.headers
@@ -30,10 +32,13 @@ function getCards () {
   })
   .then(res => {
     return getResponseData(res);
-  });
+  })
+  .catch((err) => {
+    console.log(err); 
+  })
 }
 
-function apiHandleFormSubmitAdd() {
+function apiHandleFormSubmitAdd(titleInput, linkInput) {
   return fetch(`${config.baseUrl}/cards`, {
     method: 'POST',
     headers: {
@@ -49,7 +54,7 @@ function apiHandleFormSubmitAdd() {
       return getResponseData(res);
     }) 
 }
-function apiHandleFormSubmitEdit() {
+function apiHandleFormSubmitEdit(nameInput, jobInput) {
 return fetch(`${config.baseUrl}/users/me`, {
     method: 'PATCH',
     headers: {
@@ -72,7 +77,7 @@ return fetch(`${config.baseUrl}/users/me`, {
   })
 }
 
-function apiHandleFormSubmitAvatar() {
+function apiHandleFormSubmitAvatar(avatarInput) {
 return fetch(`${config.baseUrl}/users/me/avatar`, {
     method: 'PATCH',
     headers: {
@@ -97,6 +102,9 @@ function toLike(id) {
   .then((res) => {
     return getResponseData(res);
   })  
+  .catch((err) => {
+    console.log(err); 
+  })
 }
 
 function toDislike(id) {
@@ -109,6 +117,9 @@ function toDislike(id) {
   .then((res) => {
     return getResponseData(res);
   })
+  .catch((err) => {
+    console.log(err); 
+  })
 }
 
 function apiDeleteCard (id) {
@@ -120,6 +131,9 @@ function apiDeleteCard (id) {
   })
   .then((res) => {
     return getResponseData(res);
+  })
+  .catch((err) => {
+    console.log(err); 
   })
 }
 

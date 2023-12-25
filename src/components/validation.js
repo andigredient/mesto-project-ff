@@ -2,7 +2,9 @@
 function showInputError (formElement, inputElement, errorMessage, validationConfig) {
     const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
     inputElement.classList.add(validationConfig.inputErrorClass);
+    if (inputElement.value.length <2) {errorElement.textContent = 'Минимальная длина - 2 символа'} else {
     errorElement.textContent = errorMessage;
+    }
     errorElement.classList.add(validationConfig.errorClass);
     inputElement.classList.add('input-error');
     inputElement.classList.remove('input-not-error');

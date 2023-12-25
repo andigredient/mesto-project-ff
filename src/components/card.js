@@ -1,9 +1,8 @@
-import { openModal } from "./modal.js";
-import { deleteCards } from "../index.js";
+import { openModal, closeModal } from "./modal.js";
 
-const popupConfidence = document.querySelector('.popup_confidence');
 const cardTemplate = document.querySelector('#card-template').content;
-function createCards (item, likeToCard, openImagePopup, myId) {
+
+function createCards (item, likeHandler, openImagePopup, deleteHandler, myId, popupConfidence) {
     const element = cardTemplate.cloneNode(true);
     element.querySelector('.card__title').textContent = item.name;
     const cardLikeCount = element.querySelector('.card__like-count');
@@ -19,28 +18,39 @@ function createCards (item, likeToCard, openImagePopup, myId) {
     cardImage.alt = item.name;
     if (myId === item.owner._id) {
       deleteButton.addEventListener('click', function () {
-        removeCard(item, deleteButton);
+        removeCard(item, deleteButton, deleteHandler, popupConfidence);
       }) 
     } else {
       deleteButton.remove();
     }   
     element.querySelector('.card__like-button').addEventListener('click', function (evt) {      
-      likeToCard(evt, item, cardLikeCount); 
+      likeHandler (evt, item, cardLikeCount); 
     });
     cardImage.addEventListener('click', function () {
       openImagePopup(item);
     })
     return element;
-}
+  }
 
-function removeCard(card, deleteButton) {
+function removeCard(card, deleteButton, deleteHandler, popupConfidence) {
   openModal(popupConfidence);
   document.querySelector('.popup__button-delete').addEventListener('click', function (evt) {
-    deleteCards(card._id, deleteButton.closest('.places__item'))
+    deleteHandler(card._id, deleteButton.closest('.places__item'), popupConfidence)
   })
 }
 
-export {createCards, removeCard }
+function deleteCards (card, popupConfidence) {  
+    card.remove();
+    closeModal(popupConfidence);
+}
+
+
+function likeToCard (evt, likeCount, res) {
+  likeCount.textContent = res.likes.length;
+  evt.target.classList.toggle('card__like-button_is-active');
+}
+
+export {createCards, removeCard, deleteCards, likeToCard }
 
 
 
