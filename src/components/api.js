@@ -16,10 +16,7 @@ function getUsers () {
   })
   .then(res => {
     return getResponseData(res);
-  })
-  .catch((err) => {
-    console.log(err); 
-  })
+  })  
 }
 
 //config.headers
@@ -32,9 +29,6 @@ function getCards () {
   })
   .then(res => {
     return getResponseData(res);
-  })
-  .catch((err) => {
-    console.log(err); 
   })
 }
 
@@ -69,12 +63,6 @@ return fetch(`${config.baseUrl}/users/me`, {
   .then((res) => {
     return getResponseData(res);
   }) 
-  .then(() => {
-    const profileTitle = document.querySelector('.profile__title');
-    const profileDescription = document.querySelector('.profile__description');
-    profileTitle.textContent = nameInput.value;
-    profileDescription.textContent = jobInput.value;
-  })
 }
 
 function apiHandleFormSubmitAvatar(avatarInput) {
@@ -102,9 +90,6 @@ function toLike(id) {
   .then((res) => {
     return getResponseData(res);
   })  
-  .catch((err) => {
-    console.log(err); 
-  })
 }
 
 function toDislike(id) {
@@ -117,9 +102,6 @@ function toDislike(id) {
   .then((res) => {
     return getResponseData(res);
   })
-  .catch((err) => {
-    console.log(err); 
-  })
 }
 
 function apiDeleteCard (id) {
@@ -131,9 +113,6 @@ function apiDeleteCard (id) {
   })
   .then((res) => {
     return getResponseData(res);
-  })
-  .catch((err) => {
-    console.log(err); 
   })
 }
 

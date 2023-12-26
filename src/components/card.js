@@ -1,6 +1,8 @@
 import { openModal, closeModal } from "./modal.js";
 
 const cardTemplate = document.querySelector('#card-template').content;
+let boom
+let chaka
 
 function createCards (item, likeHandler, openImagePopup, deleteHandler, myId, popupConfidence) {
     const element = cardTemplate.cloneNode(true);
@@ -18,6 +20,9 @@ function createCards (item, likeHandler, openImagePopup, deleteHandler, myId, po
     cardImage.alt = item.name;
     if (myId === item.owner._id) {
       deleteButton.addEventListener('click', function () {
+          chaka = item._id;
+          boom = deleteButton;
+
         removeCard(item, deleteButton, deleteHandler, popupConfidence);
       }) 
     } else {
@@ -33,10 +38,8 @@ function createCards (item, likeHandler, openImagePopup, deleteHandler, myId, po
   }
 
 function removeCard(card, deleteButton, deleteHandler, popupConfidence) {
-  openModal(popupConfidence);
-  document.querySelector('.popup__button-delete').addEventListener('click', function (evt) {
-    deleteHandler(card._id, deleteButton.closest('.places__item'), popupConfidence)
-  })
+  openModal(popupConfidence)
+  
 }
 
 function deleteCards (card, popupConfidence) {  
@@ -50,7 +53,7 @@ function likeToCard (evt, likeCount, res) {
   evt.target.classList.toggle('card__like-button_is-active');
 }
 
-export {createCards, removeCard, deleteCards, likeToCard }
+export {createCards, removeCard, deleteCards, likeToCard, boom, chaka }
 
 
 

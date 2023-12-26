@@ -2,12 +2,15 @@
 function showInputError (formElement, inputElement, errorMessage, validationConfig) {
     const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
     inputElement.classList.add(validationConfig.inputErrorClass);
-    if (inputElement.value.length <2) {errorElement.textContent = 'Минимальная длина - 2 символа'} else {
+    
+    
+    
+    if (inputElement.validity.tooShort) {errorElement.textContent = 'Минимальная длина - 2 символа'} else {
     errorElement.textContent = errorMessage;
     }
     errorElement.classList.add(validationConfig.errorClass);
-    inputElement.classList.add('input-error');
-    inputElement.classList.remove('input-not-error');
+    inputElement.classList.add(validationConfig.inputError);
+    inputElement.classList.remove(validationConfig.inputNotError);
   };  
   
   function hideInputError (formElement, inputElement, validationConfig) {
@@ -15,8 +18,10 @@ function showInputError (formElement, inputElement, errorMessage, validationConf
     inputElement.classList.remove(validationConfig.inputErrorClass);
     errorElement.classList.remove(validationConfig.errorClass);
     errorElement.textContent = '';
-    inputElement.classList.remove('input-error');  
-    inputElement.classList.add('input-not-error');  
+    inputElement.classList.remove(validationConfig.inputError);  
+    inputElement.classList.add(validationConfig.inputNotError);  
+
+    
   };
   
   function isValid (formElement, inputElement, validationConfig) {
@@ -33,17 +38,16 @@ function showInputError (formElement, inputElement, errorMessage, validationConf
     disabledButton(formElement, validationConfig);
   }  
   
-  function disabledButton (formElement, validationConfig) {
-    const inputArray = formElement.querySelectorAll(validationConfig.inputSelector);
-    for (let i = 0; i <= inputArray.length-1; i++ ) {
-      if (inputArray[i].validity.valid && inputArray[i] !== "") {
-        formElement.querySelector(validationConfig.submitButtonSelector).removeAttribute('disabled');
-      } else {
-        formElement.querySelector(validationConfig.submitButtonSelector).setAttribute('disabled', 'true');
-        break;
-      }
-    } 
-  };  
+  function disabledButton (formElement, validationConfig) { 
+    const isFormValid  = formElement.checkValidity(); 
+    const checkButton = formElement.querySelector(validationConfig.submitButtonSelector);
+      if (isFormValid) { 
+        checkButton.removeAttribute('disabled'); 
+      } else { 
+        checkButton.setAttribute('disabled', 'true'); 
+      } 
+  };   
+
   
   function setEventListeners (formElement, validationConfig) {
     const inputList = Array.from(formElement.querySelectorAll(validationConfig.inputSelector));
@@ -61,4 +65,12 @@ function showInputError (formElement, inputElement, errorMessage, validationConf
     });
   };
   
-export {enableValidation}  
+function clearError (inputForm, validationConfig) {
+  const errorHide = inputForm.querySelectorAll(validationConfig.formInputErrorActive);
+   errorHide.forEach((data) => {
+   data.textContent='';
+  })
+
+}
+
+export {enableValidation, clearError}  
