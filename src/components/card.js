@@ -1,8 +1,8 @@
 import { openModal, closeModal } from "./modal.js";
 
 const cardTemplate = document.querySelector('#card-template').content;
-let boom
-let chaka
+let varDeleteButton;
+let varItemId;
 
 function createCards (item, likeHandler, openImagePopup, deleteHandler, myId, popupConfidence) {
     const element = cardTemplate.cloneNode(true);
@@ -20,8 +20,8 @@ function createCards (item, likeHandler, openImagePopup, deleteHandler, myId, po
     cardImage.alt = item.name;
     if (myId === item.owner._id) {
       deleteButton.addEventListener('click', function () {
-          chaka = item._id;
-          boom = deleteButton;
+          varItemId = item._id;
+          varDeleteButton = deleteButton;
 
         removeCard(item, deleteButton, deleteHandler, popupConfidence);
       }) 
@@ -53,7 +53,7 @@ function likeToCard (evt, likeCount, res) {
   evt.target.classList.toggle('card__like-button_is-active');
 }
 
-export {createCards, removeCard, deleteCards, likeToCard, boom, chaka }
+export {createCards, removeCard, deleteCards, likeToCard, varDeleteButton, varItemId }
 
 
 

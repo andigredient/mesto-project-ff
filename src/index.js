@@ -1,6 +1,6 @@
 import {closeModal, openModal} from './components/modal.js';
 import {enableValidation, clearError} from './components/validation.js';
-import { createCards, removeCard, deleteCards, likeToCard, boom, chaka } from './components/card.js';
+import { createCards, removeCard, deleteCards, likeToCard, varDeleteButton, varItemId } from './components/card.js';
 import { getUsers, getCards, apiHandleFormSubmitAdd, apiHandleFormSubmitEdit, apiHandleFormSubmitAvatar, toLike, toDislike, apiDeleteCard } from './components/api.js';
 import './pages/index.css';
 
@@ -207,7 +207,7 @@ function likeHandler (evt, item, likeCount) {
 }
 
 document.querySelector('.popup__button-delete').addEventListener('click', function (evt) {
-  deleteHandler(chaka, boom.closest('.places__item'), popupConfidence)
+  deleteHandler(varItemId, varDeleteButton.closest('.places__item'), popupConfidence)
 })
 
 
