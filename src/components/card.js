@@ -1,8 +1,7 @@
 const cardTemplate = document.querySelector('#card-template').content;
-let varDelete;
-let varItemId;
 
-function createCards (item, likeHandler, openImagePopup, deleteHandler, myId, popupConfidence, removeCard) {
+
+function createCards (item, likeHandler, openImagePopup, myId, removeCard) {
     const element = cardTemplate.querySelector('.places__item').cloneNode(true);
     element.querySelector('.card__title').textContent = item.name;
     const cardLikeCount = element.querySelector('.card__like-count');
@@ -18,7 +17,7 @@ function createCards (item, likeHandler, openImagePopup, deleteHandler, myId, po
     cardImage.alt = item.name;
     if (myId === item.owner._id) {
       deleteButton.addEventListener('click', function () {
-        removeCard(item, element, popupConfidence);
+        removeCard(item, element);
       }) 
     } else {
       deleteButton.remove();
@@ -41,7 +40,7 @@ function likeToCard (evt, likeCount, res) {
   evt.target.classList.toggle('card__like-button_is-active');
 }
 
-export {createCards, deleteCards, likeToCard, varDelete, varItemId }
+export {createCards, deleteCards, likeToCard}
 
 
 

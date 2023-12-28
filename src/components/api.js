@@ -1,5 +1,3 @@
-
-
 const config = {
     baseUrl: 'https://nomoreparties.co/v1/wff-cohort-2',
     headers: {

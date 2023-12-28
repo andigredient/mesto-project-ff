@@ -5,7 +5,6 @@ function showInputError (formElement, inputElement, errorMessage, validationConf
     errorElement.textContent = errorMessage;
     errorElement.classList.add(validationConfig.errorClass);
     inputElement.classList.add(validationConfig.inputError);
-    inputElement.classList.remove(validationConfig.inputNotError);
   };  
   
   function hideInputError (formElement, inputElement, validationConfig) {
@@ -14,7 +13,6 @@ function showInputError (formElement, inputElement, errorMessage, validationConf
     errorElement.classList.remove(validationConfig.errorClass);
     errorElement.textContent = '';
     inputElement.classList.remove(validationConfig.inputError);  
-    inputElement.classList.add(validationConfig.inputNotError);     
   };
   
   function isValid (formElement, inputElement, validationConfig) {
