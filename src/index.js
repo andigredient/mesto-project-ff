@@ -1,6 +1,6 @@
 import {closeModal, openModal} from './components/modal.js';
 import {enableValidation, clearError} from './components/validation.js';
-import { createCards, removeCard, deleteCards, likeToCard, varDeleteButton, varItemId } from './components/card.js';
+import { createCards, deleteCards, likeToCard, varDelete, varItemId } from './components/card.js';
 import { getUsers, getCards, apiHandleFormSubmitAdd, apiHandleFormSubmitEdit, apiHandleFormSubmitAvatar, toLike, toDislike, apiDeleteCard } from './components/api.js';
 import './pages/index.css';
 
@@ -40,7 +40,6 @@ const validationConfig = {
   inputErrorClass: 'form__input_type_error',
   errorClass: 'form__input-error_active',
   inputError: 'input-error',
-  inputNotError: 'input-not-error',
   formInputErrorActive: '.form__input-error_active'
 };
 
@@ -54,11 +53,10 @@ function handleFormSubmitEdit(evt) {
   const buttonLoading = evt.target.querySelector('.popup__button');
   renderLoading(true, buttonLoading);  
   apiHandleFormSubmitEdit(nameInput, jobInput)
-  .then (() => {
+  .then ((res) => {
     const profileTitle = document.querySelector('.profile__title');
-    const profileDescription = document.querySelector('.profile__description');
-    profileTitle.textContent = nameInput.value;
-    profileDescription.textContent = jobInput.value;
+    profileTitle.textContent = res.name;
+    profileDescription.textContent = res.about;
     closeModal(popupEdit);
   })
   .catch((err) => {
@@ -73,7 +71,7 @@ function handleFormSubmitAdd(evt) {
   renderLoading(true, buttonLoading);
   apiHandleFormSubmitAdd(titleInput, linkInput)
   .then ((res) => {
-    placesList.prepend(createCards(res, likeHandler, openImagePopup, deleteHandler, res.owner._id, popupConfidence))
+    placesList.prepend(createCards(res, likeHandler, openImagePopup, deleteHandler, res.owner._id, popupConfidence, removeCard))
     closeModal(popupAdd);
   })
   .catch((err) => {
@@ -87,8 +85,8 @@ function handleFormSubmitAvatar(evt) {
   const buttonLoading = evt.target.querySelector('.popup__button');
   renderLoading(true, buttonLoading)
   apiHandleFormSubmitAvatar(avatarInput)
-  .then (() => {
-    profileImg.style.backgroundImage = `url("${avatarInput.value}"`;
+  .then ((res) => {
+    profileImg.style.backgroundImage = `url("${res.avatar}"`;
     closeModal(popupAvatar);
   })
   .catch((err) => {
@@ -104,11 +102,10 @@ profileImg.addEventListener('click', function() {
   formAvatar.querySelector('.popup__button').setAttribute('disabled', 'true');
   formAvatar.reset();
   inputCardLink.classList.remove('input-error');  
-  inputCardLink.classList.add('input-not-error');  
   const inputForm = formAvatar.querySelectorAll('.popup__input');
   clearError(formAvatar, validationConfig);
   inputForm.forEach((input) => {
-  input.classList.add('input-not-error');}) 
+}) 
   openModal(popupAvatar);
 })
 
@@ -119,7 +116,6 @@ buttonEdit.addEventListener('click', function() {
     const inputForm = formEditProfile.querySelectorAll('.popup__input');
     clearError(formEditProfile, validationConfig);
     inputForm.forEach((input) => {
-      input.classList.add('input-not-error');
     }) 
     openModal(popupEdit);
   })
@@ -129,15 +125,10 @@ buttonEdit.addEventListener('click', function() {
   formAddCard.querySelector('.popup__button').setAttribute('disabled', 'true');
   formAddCard.reset();
   inputCardName.classList.remove('input-error');  
-  inputCardName.classList.add('input-not-error');  
   inputCardLink.classList.remove('input-error');  
-  inputCardLink.classList.add('input-not-error');  
   const inputForm = formAddCard.querySelectorAll('.popup__input');
   clearError(formAddCard, validationConfig);
-    inputForm.forEach((input) => {
-      input.classList.add('input-not-error');
-    }) 
-    openModal(popupAdd); 
+  openModal(popupAdd); 
 })
 
 //попап с картинками
@@ -165,7 +156,7 @@ Promise.all([getCards(), getUsers()])
   const myId = user._id;
   profileImg.style.backgroundImage = `url(${user.avatar})`; 
   cards.forEach ((item) =>  {    
-    placesList.append(createCards(item, likeHandler, openImagePopup, deleteHandler, myId, popupConfidence))
+    placesList.append(createCards(item, likeHandler, openImagePopup, deleteHandler, myId, popupConfidence, removeCard))
   });
 })
 .catch((err) => {
@@ -207,15 +198,24 @@ function likeHandler (evt, item, likeCount) {
 }
 
 document.querySelector('.popup__button-delete').addEventListener('click', function (evt) {
-  deleteHandler(varItemId, varDeleteButton.closest('.places__item'), popupConfidence)
+  deleteHandler()
 })
 
+function removeCard(item, element, deleteHandler) {
+  varItemId = item._id;
+  varDelete = element;
+  openModal(popupConfidence)  
+}
 
-function deleteHandler (id, card, popupConfidence) {
-  
-  apiDeleteCard(id)
+//element.;
+
+function deleteHandler () {  
+  apiDeleteCard(varItemId)
   .then(() => {
-    deleteCards(card, popupConfidence);
+    deleteCards(varDelete);
+    closeModal(popupConfidence);  
+  })
+  .then(() => {
   })
   .catch((err) => {
     console.log(err); 

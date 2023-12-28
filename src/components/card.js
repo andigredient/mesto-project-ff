@@ -1,11 +1,9 @@
-import { openModal, closeModal } from "./modal.js";
-
 const cardTemplate = document.querySelector('#card-template').content;
-let varDeleteButton;
+let varDelete;
 let varItemId;
 
-function createCards (item, likeHandler, openImagePopup, deleteHandler, myId, popupConfidence) {
-    const element = cardTemplate.cloneNode(true);
+function createCards (item, likeHandler, openImagePopup, deleteHandler, myId, popupConfidence, removeCard) {
+    const element = cardTemplate.querySelector('.places__item').cloneNode(true);
     element.querySelector('.card__title').textContent = item.name;
     const cardLikeCount = element.querySelector('.card__like-count');
     cardLikeCount.textContent = item.likes.length;
@@ -20,10 +18,7 @@ function createCards (item, likeHandler, openImagePopup, deleteHandler, myId, po
     cardImage.alt = item.name;
     if (myId === item.owner._id) {
       deleteButton.addEventListener('click', function () {
-          varItemId = item._id;
-          varDeleteButton = deleteButton;
-
-        removeCard(item, deleteButton, deleteHandler, popupConfidence);
+        removeCard(item, element, popupConfidence);
       }) 
     } else {
       deleteButton.remove();
@@ -37,23 +32,16 @@ function createCards (item, likeHandler, openImagePopup, deleteHandler, myId, po
     return element;
   }
 
-function removeCard(card, deleteButton, deleteHandler, popupConfidence) {
-  openModal(popupConfidence)
-  
+function deleteCards (card) { 
+  card.remove();
 }
-
-function deleteCards (card, popupConfidence) {  
-    card.remove();
-    closeModal(popupConfidence);
-}
-
 
 function likeToCard (evt, likeCount, res) {
   likeCount.textContent = res.likes.length;
   evt.target.classList.toggle('card__like-button_is-active');
 }
 
-export {createCards, removeCard, deleteCards, likeToCard, varDeleteButton, varItemId }
+export {createCards, deleteCards, likeToCard, varDelete, varItemId }
 
 
 

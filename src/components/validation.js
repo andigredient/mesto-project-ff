@@ -1,13 +1,8 @@
 
 function showInputError (formElement, inputElement, errorMessage, validationConfig) {
     const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
-    inputElement.classList.add(validationConfig.inputErrorClass);
-    
-    
-    
-    if (inputElement.validity.tooShort) {errorElement.textContent = 'Минимальная длина - 2 символа'} else {
+    inputElement.classList.add(validationConfig.inputErrorClass);    
     errorElement.textContent = errorMessage;
-    }
     errorElement.classList.add(validationConfig.errorClass);
     inputElement.classList.add(validationConfig.inputError);
     inputElement.classList.remove(validationConfig.inputNotError);
@@ -19,9 +14,7 @@ function showInputError (formElement, inputElement, errorMessage, validationConf
     errorElement.classList.remove(validationConfig.errorClass);
     errorElement.textContent = '';
     inputElement.classList.remove(validationConfig.inputError);  
-    inputElement.classList.add(validationConfig.inputNotError);  
-
-    
+    inputElement.classList.add(validationConfig.inputNotError);     
   };
   
   function isValid (formElement, inputElement, validationConfig) {
@@ -35,25 +28,25 @@ function showInputError (formElement, inputElement, errorMessage, validationConf
     } else {
       hideInputError(formElement, inputElement, validationConfig);
     }
-    disabledButton(formElement, validationConfig);
   }  
   
-  function disabledButton (formElement, validationConfig) { 
+  function disabledButton (formElement, checkButton) { 
     const isFormValid  = formElement.checkValidity(); 
-    const checkButton = formElement.querySelector(validationConfig.submitButtonSelector);
-      if (isFormValid) { 
-        checkButton.removeAttribute('disabled'); 
-      } else { 
-        checkButton.setAttribute('disabled', 'true'); 
-      } 
+    if (isFormValid) { 
+      checkButton.removeAttribute('disabled'); 
+    } else { 
+      checkButton.setAttribute('disabled', 'true'); 
+    } 
   };   
-
+  
   
   function setEventListeners (formElement, validationConfig) {
     const inputList = Array.from(formElement.querySelectorAll(validationConfig.inputSelector));
+    const checkButton = formElement.querySelector(validationConfig.submitButtonSelector);
     inputList.forEach((inputElement) => {
       inputElement.addEventListener('input', () => {
         isValid(formElement, inputElement, validationConfig)
+        disabledButton(formElement, checkButton);
       });
     });
   }; 
@@ -65,10 +58,10 @@ function showInputError (formElement, inputElement, errorMessage, validationConf
     });
   };
   
-function clearError (inputForm, validationConfig) {
-  const errorHide = inputForm.querySelectorAll(validationConfig.formInputErrorActive);
-   errorHide.forEach((data) => {
-   data.textContent='';
+function clearError (form, validationConfig) {
+  const inputList = form.querySelectorAll(validationConfig.inputSelector);
+   inputList.forEach((data) => {
+    hideInputError(form, data, validationConfig);
   })
 
 }

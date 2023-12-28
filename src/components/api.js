@@ -19,8 +19,6 @@ function getUsers () {
   })  
 }
 
-//config.headers
-
 function getCards () { 
   return fetch(`${config.baseUrl}/cards`, {
     headers: {
